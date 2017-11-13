@@ -2,7 +2,7 @@ package org.mulesoft.common.ext
 
 import org.scalatest.{Assertions, FunSuite, Matchers}
 
-class DiffTest extends FunSuite with Assertions with Matchers {
+trait DiffTest extends FunSuite with Assertions with Matchers {
 
   test("Case Insensitive Diff") {
     val deltas = Diff.caseInsensitive.diff(first, second)

@@ -52,16 +52,18 @@ protected[io] trait File[F[_]] {
   /** Returns true if the File is a directory */
   def isDirectory: F[Boolean]
 
-  /** Returns true if the File is a normal Filey */
+  /** Returns true if the File is a normal File */
   def isFile: F[Boolean]
 
   override def toString: String = path
 }
 
 trait AsyncFile extends File[Future] {
-  override def async: AsyncFile = this
+  override def async: AsyncFile  = this
+  def /(name: String): AsyncFile = fileSystem.asyncFile(this, name)
 }
 
 trait SyncFile extends File[Id] {
-  override def sync: SyncFile = this
+  override def sync: SyncFile   = this
+  def /(name: String): SyncFile = fileSystem.syncFile(this, name)
 }
