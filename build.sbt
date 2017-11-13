@@ -4,7 +4,7 @@ name := "scala-common"
 
 val settings = Common.settings ++ Seq(
   name := "scala-common",
-  version := "0.0.7",
+  version := "0.0.8-SNAPSHOT",
 
   libraryDependencies ++= Seq(
     "org.scalactic" %%% "scalactic" % "3.0.1",
