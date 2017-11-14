@@ -3,10 +3,8 @@ package org.mulesoft.common.io
 import java.io.IOException
 
 import org.mulesoft.common.io.JsBaseFile._
-import org.mulesoft.common.js.SysError
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future._
 import scala.concurrent.{Future, Promise}
 
 /**
@@ -42,19 +40,22 @@ protected class JsAsyncFile(fileSystem: JsServerFileSystem, path: String)
     promise.future
   }
 
-  override def exists: Future[Boolean]      = stats map (_.isDefined)
-  override def isDirectory: Future[Boolean] = stats map (checkStats(_, _.isDirectory()))
-  override def isFile: Future[Boolean]      = stats map (checkStats(_, _.isFile()))
+  override def exists: Future[Boolean]      = stat map (_.isDefined)
+  override def isDirectory: Future[Boolean] = stat map (checkStats(_, _.isDirectory()))
+  override def isFile: Future[Boolean]      = stat map (checkStats(_, _.isFile()))
 
   private def stat: Future[Option[Stats]] = {
-    if (stats == null) Fs.stat(path, mkFuture)
+    if (stats == null) stats = readStats
     stats
   }
 
-  private def mkFuture(err: SysError, s: Stats) =
-    stats =
-      if (err != null) successful(Some(s))
-      else if (err.code == ENOENT) successful(None)
-      else failed(new IOException(err.message))
-
+  private def readStats = {
+    val promise = Promise[Option[Stats]]()
+    Fs.stat(path, (err, s) => {
+      if (err == null) promise.success(Some(s))
+      else if (err.code == ENOENT) promise.success(None)
+      else promise.failure(new IOException(err.message))
+    })
+    promise.future
+  }
 }

@@ -20,16 +20,16 @@ protected class JsSyncFile(fileSystem: JsServerFileSystem, path: String)
   override def write(data: CharSequence, encoding: String): Unit = Fs.writeFileSync(path, data.toString, encoding)
 
   override def exists: Boolean      = stat.isDefined
-  override def isDirectory: Boolean = checkStats(stats, _.isDirectory())
-  override def isFile: Boolean      = checkStats(stats, _.isFile())
+  override def isDirectory: Boolean = checkStats(stat, _.isDirectory())
+  override def isFile: Boolean      = checkStats(stat, _.isFile())
 
   private def stat: Option[Stats] = {
     if (stats == null) {
-      stats = try Some(Fs.statSync(path))
-      catch {
-        case e: JavaScriptException =>
-          if (e.getMessage contains ENOENT) None
-          else throw e
+      try {
+        stats = Some(Fs.statSync(path))
+      } catch {
+        case e: JavaScriptException if e.getMessage contains ENOENT => stats = None
+        case e: Throwable => throw e
       }
     }
     stats
