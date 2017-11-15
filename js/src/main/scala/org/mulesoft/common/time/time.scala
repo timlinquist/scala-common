@@ -1,7 +1,7 @@
 package org.mulesoft.common
 
 
-import org.mulesoft.common.time.SimpleDateTime.zeroTime
+import org.mulesoft.common.time.SimpleDateTime.ZeroTime
 
 import scala.scalajs.js.{Date => jsDate}
 import java.util.Date
@@ -16,7 +16,7 @@ package object time {
     */
   implicit class DateTimes(val dt: SimpleDateTime) extends AnyVal {
     def toJsDate: jsDate = {
-      val t    = dt.timeOfDay.getOrElse(zeroTime)
+      val t    = dt.timeOfDay.getOrElse(ZeroTime)
       val nano = t.nano / 1000000
       dt.zoneOffset match {
         case None =>

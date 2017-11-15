@@ -11,14 +11,14 @@ case class SimpleDateTime(year: Int,
                           timeOfDay: Option[TimeOfDay] = None,
                           zoneOffset: Option[Int] = None)
 
-case class TimeOfDay(hour: Int, minute: Int, second: Int = 0, nano: Int = 0)
+case class TimeOfDay(hour: Int, minute: Int = 0, second: Int = 0, nano: Int = 0)
 
 /**
   * Some utility functions for DateTimes
   */
 object SimpleDateTime {
-  val zeroTime              = TimeOfDay(0, 0)
-  val Epoch: SimpleDateTime = SimpleDateTime(1970, 1, 1, Some(zeroTime), Some(0))
+  val ZeroTime              = TimeOfDay(0, 0)
+  val Epoch: SimpleDateTime = SimpleDateTime(1970, 1, 1, Some(ZeroTime), Some(0))
 
   /*
    * Compacted in an ugly string because the JS backend does not support comments
@@ -47,6 +47,17 @@ object SimpleDateTime {
     """(\d{4})-(\d\d?)-(\d\d?)(?:(?:[Tt]|[\ \t]+)(\d\d?):(\d\d?)(?::(\d\d?))?(?:\.(\d*))?(?:(?:[\ \t]*)?(Z|([-+]\d\d?)(?::(\d\d?))?))?)?""".r
 
   private def toInt(s: String): Int = if (s == null || s.isEmpty) 0 else parseInt(s)
+
+  /** Build from day parts */
+  def apply(year: Int, month: Int, day: Int): SimpleDateTime = new SimpleDateTime(year, month, day, None, None)
+
+  /** Build from day and time but not time zone */
+  def apply(year: Int, month: Int, day: Int, timeOfDay: TimeOfDay): SimpleDateTime =
+    new SimpleDateTime(year, month, day, Some(timeOfDay), None)
+
+  /** Build from day and time parts and zone offset in  minutes */
+  def apply(year: Int, month: Int, day: Int, timeOfDay: TimeOfDay, zoneOffset: Int): SimpleDateTime =
+    new SimpleDateTime(year, month, day, Some(timeOfDay), Some(zoneOffset*60))
 
   /**
     * Unapply Extractor
