@@ -4,24 +4,22 @@ import java.io.IOException
 
 import org.mulesoft.common.js.SysError
 
-import scala.concurrent.{Future, Promise}
-import scala.language.higherKinds
-
+import scala.concurrent.Promise
 /**
   * Base File for JS implementation
   */
-private[io] abstract class JsBaseFile[F[_]](val fileSystem: JsServerFileSystem, val path: String) extends File[F] {
+private[io] abstract class JsBaseFile(val fileSystem: JsServerFileSystem, val path: String) extends File {
   private val prefixLength = fileSystem.prefixLength(path)
 
   override def parent: String = {
     val index = path.lastIndexOf(fileSystem.separatorChar)
     if (index >= prefixLength) path.substring(0, index)
     else if (prefixLength > 0 && path.length > prefixLength) path.substring(0, prefixLength)
-    else ""
+    else null
   }
 
   override def name: String = {
-    val index: Int = path.lastIndexOf(fileSystem.separatorChar)
+    val index = path.lastIndexOf(fileSystem.separatorChar)
     if (index < prefixLength) path.substring(prefixLength) else path.substring(index + 1)
   }
 
@@ -40,5 +38,6 @@ object JsBaseFile {
     case None    => false
   }
 
+  // $COVERAGE-OFF$
   private[io] final val ENOENT = "ENOENT"
 }

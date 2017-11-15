@@ -1,7 +1,5 @@
 package org.mulesoft.common.io
 
-import java.io.IOException
-
 import org.mulesoft.common.io.JsBaseFile._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -11,10 +9,19 @@ import scala.concurrent.{Future, Promise}
   * Implementation of a AsyncFile for the JavaScript
   * * @todo better handling of errors, Real async mode
   */
-protected class JsAsyncFile(fileSystem: JsServerFileSystem, path: String)
-    extends JsBaseFile[Future](fileSystem, path)
-    with AsyncFile {
-  protected var stats: Future[Option[Stats]] = _
+protected class JsAsyncFile(fs: JsServerFileSystem, path: String) extends JsBaseFile(fs, path) with AsyncFile {
+
+  override def delete: Future[Unit] = {
+    val promise = Promise[Unit]()
+    Fs.stat(path,
+            (err, s) =>
+              if (err != null) promise.success(())
+              else {
+                val rmOp = if (s.isDirectory()) Fs.rmdir _ else Fs.unlink _
+                rmOp(path, completeOrFail(promise, (), _))
+            })
+    promise.future
+  }
 
   override def list: Future[Array[String]] = {
     val promise = Promise[Array[String]]()
@@ -24,7 +31,7 @@ protected class JsAsyncFile(fileSystem: JsServerFileSystem, path: String)
 
   override def mkdir: Future[Unit] = {
     val promise = Promise[Unit]()
-    Fs.mkdir(path, err => completeOrFail(promise, (), err))
+    Fs.mkdir(path, completeOrFail(promise, (), _))
     promise.future
   }
 
@@ -36,7 +43,7 @@ protected class JsAsyncFile(fileSystem: JsServerFileSystem, path: String)
 
   override def write(data: CharSequence, encoding: String): Future[Unit] = {
     val promise = Promise[Unit]()
-    Fs.writeFile(path, data.toString, encoding, err => completeOrFail(promise, (), err))
+    Fs.writeFile(path, data.toString, encoding, completeOrFail(promise, (), _))
     promise.future
   }
 
@@ -45,17 +52,8 @@ protected class JsAsyncFile(fileSystem: JsServerFileSystem, path: String)
   override def isFile: Future[Boolean]      = stat map (checkStats(_, _.isFile()))
 
   private def stat: Future[Option[Stats]] = {
-    if (stats == null) stats = readStats
-    stats
-  }
-
-  private def readStats = {
     val promise = Promise[Option[Stats]]()
-    Fs.stat(path, (err, s) => {
-      if (err == null) promise.success(Some(s))
-      else if (err.code == ENOENT) promise.success(None)
-      else promise.failure(new IOException(err.message))
-    })
+    Fs.stat(path, (err, s) => if (err == null) promise.success(Some(s)) else promise.success(None))
     promise.future
   }
 }

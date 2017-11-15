@@ -6,7 +6,7 @@ import scala.language.higherKinds
 /**
   * A File Object abstraction (Similar to java.util.File) but with implementations in Js and JVM.
   */
-protected[io] trait File[F[_]] {
+trait File {
 
   /** Returns an async view of the file */
   def async: AsyncFile
@@ -14,24 +14,16 @@ protected[io] trait File[F[_]] {
   /** Returns a sync view of the file */
   def sync: SyncFile
 
-  /** list the contents of a directory. */
-  def list: F[Array[String]]
-
-  /** Create a directory. */
-  def mkdir: F[Unit]
-
-  /** Read the file. */
-  def read(encoding: String = Utf8): F[CharSequence]
-
-  /** Write to the file. */
-  def write(data: CharSequence, encoding: String = Utf8): F[Unit]
-
   /** Returns the Filesystem for this file */
   def fileSystem: FileSystem
 
-  /**
-    * The whole file path
-    */
+  /** The parent File */
+  def parentFile: File
+
+  /** A file into this file directory */
+  def /(name: String): File
+
+  /** The whole file path */
   def path: String
 
   /**
@@ -45,6 +37,25 @@ protected[io] trait File[F[_]] {
     * pathname.  This is just the last name in the pathname's name sequence.
     */
   def name: String
+  override def toString: String = path
+}
+
+protected[io] trait FileProto[F[_]] extends File {
+
+  /** Delete a File */
+  def delete: F[Unit]
+
+  /** list the contents of a directory. */
+  def list: F[Array[String]]
+
+  /** Create a directory. */
+  def mkdir: F[Unit]
+
+  /** Read the file. */
+  def read(encoding: String = Utf8): F[CharSequence]
+
+  /** Write to the file. */
+  def write(data: CharSequence, encoding: String = Utf8): F[Unit]
 
   /** Returns true if the File exists */
   def exists: F[Boolean]
@@ -55,15 +66,16 @@ protected[io] trait File[F[_]] {
   /** Returns true if the File is a normal File */
   def isFile: F[Boolean]
 
-  override def toString: String = path
 }
 
-trait AsyncFile extends File[Future] {
+trait AsyncFile extends FileProto[Future] {
   override def async: AsyncFile  = this
   def /(name: String): AsyncFile = fileSystem.asyncFile(this, name)
+  def parentFile: AsyncFile      = fileSystem.asyncFile(this.parent)
 }
 
-trait SyncFile extends File[Id] {
+trait SyncFile extends FileProto[Id] {
   override def sync: SyncFile   = this
   def /(name: String): SyncFile = fileSystem.syncFile(this, name)
+  def parentFile: SyncFile      = fileSystem.syncFile(this.parent)
 }

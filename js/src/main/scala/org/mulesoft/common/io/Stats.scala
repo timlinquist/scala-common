@@ -5,6 +5,8 @@ import scala.scalajs.js
 /**
   * Stats
   */
+// Exclude from coverage because native functions are not tracked
+// $COVERAGE-OFF$
 @js.native
 trait Stats extends js.Object {
   def dev: Int            = js.native

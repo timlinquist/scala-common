@@ -16,6 +16,7 @@ protected class JvmAsyncFile(private val syncFile: JvmSyncFile) extends AsyncFil
   override def parent: String = syncFile.parent
   override def name: String   = syncFile.name
 
+  override def delete: Future[Unit]                                      = Future.successful(syncFile.delete)
   override def list: Future[Array[String]]                               = Future.successful(syncFile.list)
   override def mkdir: Future[Unit]                                       = Future(syncFile.mkdir)
   override def read(encoding: String): Future[CharSequence]              = Future(syncFile.read(encoding))

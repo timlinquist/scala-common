@@ -16,11 +16,12 @@ protected class JvmSyncFile(val fileSystem: FileSystem, val path: String) extend
   override def list: Array[String] = file.list()
 
   override def mkdir: Unit = file.mkdirs()
+  override def delete: Unit = file.delete()
 
   override def read(encoding: String): CharSequence = {
     val fis  = new InputStreamReader(new FileInputStream(file), encoding)
     val data = new Array[Char](file.length.toInt)
-    val n = fis.read(data)
+    val n    = fis.read(data)
     fis.close()
     if (n == data.length) data else data.subSequence(0, n)
   }
