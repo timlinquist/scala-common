@@ -13,7 +13,7 @@ trait IoAsyncTest extends AsyncFunSuite with BaseIoTest {
   test("read") {
     val dataDir   = fs.asyncFile(dirName)
     val hello     = dataDir / helloFileName
-    val helloIso  = dataDir / helloIsoFileName
+    val helloIso  = hello withExt "iso"
     val helloPath = dataDir.path + fs.separatorChar + helloFileName
     hello.path shouldBe helloPath
     hello.toString shouldBe helloPath

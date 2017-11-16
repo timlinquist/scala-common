@@ -20,7 +20,7 @@ trait IoTest extends FunSuite with BaseIoTest {
 
     hello.read().toString shouldBe helloString
 
-    (dataDir / helloIsoFileName read LatinEncoding).toString shouldBe helloString
+    (hello withExt ".iso" read LatinEncoding).toString shouldBe helloString
   }
 
   test("write") {
@@ -57,7 +57,7 @@ trait IoTest extends FunSuite with BaseIoTest {
     f.parent shouldBe null
   }
   test("errors") {
-      an[Exception] should be thrownBy (fs.syncFile(targetDirName) / helloFileName).read()
+    an[Exception] should be thrownBy (fs.syncFile(targetDirName) / helloFileName).read()
   }
 
   private def runTest(parent2: String, parts: List[String]) = {

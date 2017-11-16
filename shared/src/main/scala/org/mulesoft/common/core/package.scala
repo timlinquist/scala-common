@@ -71,7 +71,7 @@ package object core {
       buffer.toString
     }
 
-    def encode: String = ("" /: str)(_ + _.encodeStringChar)
+    def encode: String = if (str == null) null else ("" /: str)(_ + _.encodeStringChar)
 
     /** Compare two Strings ignoring the spaces in each */
     def equalsIgnoreSpaces(str2: String): Boolean = {
@@ -132,7 +132,7 @@ package object core {
     for (i <- from until to) {
       val n = if (i < str.length) digit(str.charAt(i), 16) else -1
       if (n == -1) {
-          if (ignoreErrors) return str
+          if (ignoreErrors) return str.substring(i, Math.min(to, str.length))
           throw new IllegalArgumentException("Malformed unicode encoding: " + str)
       }
       value = (value << 4) | n

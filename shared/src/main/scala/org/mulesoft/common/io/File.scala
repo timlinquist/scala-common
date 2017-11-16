@@ -1,5 +1,6 @@
 package org.mulesoft.common.io
 
+import org.mulesoft.common.core._
 import scala.concurrent.Future
 import scala.language.higherKinds
 
@@ -37,6 +38,10 @@ trait File {
     * pathname.  This is just the last name in the pathname's name sequence.
     */
   def name: String
+
+  /** Get a new file replacing the extension */
+  def withExt(newExt: String): File
+
   override def toString: String = path
 }
 
@@ -69,13 +74,15 @@ protected[io] trait FileProto[F[_]] extends File {
 }
 
 trait AsyncFile extends FileProto[Future] {
-  override def async: AsyncFile  = this
-  def /(name: String): AsyncFile = fileSystem.asyncFile(this, name)
-  def parentFile: AsyncFile      = fileSystem.asyncFile(this.parent)
+  override def async: AsyncFile                   = this
+  override def /(name: String): AsyncFile         = fileSystem.asyncFile(this, name)
+  override def parentFile: AsyncFile              = fileSystem.asyncFile(this.parent)
+  override def withExt(newExt: String): AsyncFile = fileSystem.asyncFile(path replaceExtension newExt)
 }
 
 trait SyncFile extends FileProto[Id] {
-  override def sync: SyncFile   = this
-  def /(name: String): SyncFile = fileSystem.syncFile(this, name)
-  def parentFile: SyncFile      = fileSystem.syncFile(this.parent)
+  override def sync: SyncFile                    = this
+  override def /(name: String): SyncFile         = fileSystem.syncFile(this, name)
+  override def parentFile: SyncFile              = fileSystem.syncFile(this.parent)
+  override def withExt(newExt: String): SyncFile = fileSystem.syncFile(path replaceExtension newExt)
 }
