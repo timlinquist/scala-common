@@ -3,7 +3,7 @@ package org.mulesoft.common.io
 /**
   * Implementation of the file system for node.js platform
   */
-class JsServerFileSystem private() extends FileSystem {
+class JsServerFileSystem private[io]() extends FileSystem {
 
   /** The prefix length for a path */
   def prefixLength(path: String): Int = if (path.length == 0) 0 else if (path.charAt(0) == '/') 1 else 0
@@ -14,4 +14,4 @@ class JsServerFileSystem private() extends FileSystem {
 
 }
 
-object JsServerFileSystem extends JsServerFileSystem
+object Fs extends JsServerFileSystem

@@ -8,7 +8,7 @@ import scala.scalajs.js.annotation.JSImport
 // Exclude from coverage because native functions are not tracked
 // $COVERAGE-OFF$
 @js.native
-private[io] trait Fs extends js.Object {
+private[io] trait JsFs extends js.Object {
   type Fs1    = js.Function1[SysError, Any]
   type Fs2[T] = js.Function2[SysError, T, Any]
 
@@ -60,4 +60,4 @@ private[io] trait Fs extends js.Object {
 
 @js.native
 @JSImport("fs", JSImport.Namespace)
-object Fs extends Fs
+object JsFs extends JsFs

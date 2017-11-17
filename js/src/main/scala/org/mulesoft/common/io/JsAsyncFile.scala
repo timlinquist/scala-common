@@ -13,11 +13,11 @@ protected class JsAsyncFile(fs: JsServerFileSystem, path: String) extends JsBase
 
   override def delete: Future[Unit] = {
     val promise = Promise[Unit]()
-    Fs.stat(path,
+    JsFs.stat(path,
             (err, s) =>
               if (err != null) promise.success(())
               else {
-                val rmOp = if (s.isDirectory()) Fs.rmdir _ else Fs.unlink _
+                val rmOp = if (s.isDirectory()) JsFs.rmdir _ else JsFs.unlink _
                 rmOp(path, completeOrFail(promise, (), _))
             })
     promise.future
@@ -25,25 +25,25 @@ protected class JsAsyncFile(fs: JsServerFileSystem, path: String) extends JsBase
 
   override def list: Future[Array[String]] = {
     val promise = Promise[Array[String]]()
-    Fs.readdir(path, (err, array) => completeOrFail(promise, array.toArray, err))
+    JsFs.readdir(path, (err, array) => completeOrFail(promise, array.toArray, err))
     promise.future
   }
 
   override def mkdir: Future[Unit] = {
     val promise = Promise[Unit]()
-    Fs.mkdir(path, completeOrFail(promise, (), _))
+    JsFs.mkdir(path, completeOrFail(promise, (), _))
     promise.future
   }
 
   override def read(encoding: String): Future[CharSequence] = {
     val promise = Promise[String]()
-    Fs.readFile(path, encoding, (err, data) => completeOrFail(promise, data.asInstanceOf[String], err))
+    JsFs.readFile(path, encoding, (err, data) => completeOrFail(promise, data.asInstanceOf[String], err))
     promise.future
   }
 
   override def write(data: CharSequence, encoding: String): Future[Unit] = {
     val promise = Promise[Unit]()
-    Fs.writeFile(path, data.toString, encoding, completeOrFail(promise, (), _))
+    JsFs.writeFile(path, data.toString, encoding, completeOrFail(promise, (), _))
     promise.future
   }
 
@@ -53,7 +53,7 @@ protected class JsAsyncFile(fs: JsServerFileSystem, path: String) extends JsBase
 
   private def stat: Future[Option[Stats]] = {
     val promise = Promise[Option[Stats]]()
-    Fs.stat(path, (err, s) => if (err == null) promise.success(Some(s)) else promise.success(None))
+    JsFs.stat(path, (err, s) => if (err == null) promise.success(Some(s)) else promise.success(None))
     promise.future
   }
 }
