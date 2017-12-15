@@ -3,6 +3,7 @@ import org.scalajs.core.tools.linker.ModuleKind
 name := "scala-common"
 
 val settings = Common.settings ++ Common.publish ++ Seq(
+  organization := "org.mule.common",
   name := "scala-common",
   version := "0.1.2-SNAPSHOT",
 

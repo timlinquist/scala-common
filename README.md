@@ -1,4 +1,4 @@
-# Scala common
+# Scala Common
 
 Common utility code for:
 - core
