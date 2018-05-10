@@ -59,4 +59,11 @@ trait CoreTest extends FunSuite with Matchers {
         "aaa" replaceExtension "bb" shouldBe "aaa.bb"
         "x.y.z" replaceExtension "a" shouldBe "x.y.a"
     }
+    test("add quotes") {
+        val unquoted = "aaa"
+        val quoted = "\"aaa\""
+
+        unquoted.quoted.shouldBe(quoted)
+        quoted.quoted.shouldBe(quoted)
+    }
 }

@@ -21,7 +21,7 @@ package object core {
       result
     }
 
-    def hex(ch: Int) = Integer.toHexString(ch).toUpperCase
+    def hex(ch: Int): String = Integer.toHexString(ch).toUpperCase
 
 
     // Adapted from Apache Commons
@@ -157,11 +157,18 @@ package object core {
       }
       true
     }
+
     /** Interpreting the string as a file name replace The extension */
     def replaceExtension(newExt: String): String = {
         val lastDot = str.lastIndexOf('.')
         val ext = if (newExt == null || newExt.isEmpty) "" else if (newExt(0) != '.') '.' + newExt else newExt
         if (lastDot == -1) str + ext else str.substring(0, lastDot) + ext
+    }
+
+    /** Add quotes to the string. If the string already has quotes, returns the same string */
+    def quoted: String = {
+      if (str.startsWith("\"") && str.endsWith("\"")) str
+      else s""""$str""""
     }
   }
 
