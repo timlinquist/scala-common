@@ -23,10 +23,8 @@ package object time {
     def toZonedDateTime: ZonedDateTime =
       ZonedDateTime.of(toLocalDateTime, ZoneOffset.ofTotalSeconds(dt.zoneOffset.getOrElse(0)))
 
-    def toInstant: Instant = toZonedDateTime.toInstant
-
+    def toInstant: Instant   = toZonedDateTime.toInstant
     def toCalendar: Calendar = GregorianCalendar.from(toZonedDateTime)
-
     def toDate: Date         = toCalendar.getTime
   }
 }
