@@ -5,7 +5,7 @@ name := "scala-common"
 val settings = Common.settings ++ Common.publish ++ Seq(
   organization := "org.mule.common",
   name := "scala-common",
-  version := "0.2.0-SNAPSHOT",
+  version := "0.1.5",
 
   libraryDependencies ++= Seq(
     "org.scalactic" %%% "scalactic" % "3.0.1",
