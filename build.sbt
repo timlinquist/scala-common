@@ -1,4 +1,4 @@
-import org.scalajs.core.tools.linker.ModuleKind
+import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 name := "scala-common"
 
@@ -17,7 +17,7 @@ val settings = Common.settings ++ Common.publish ++ Seq(
 
 lazy val root = project.in(file(".")).aggregate(commonJS, commonJVM)
 
-lazy val common = crossProject
+lazy val common = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
   .settings(settings: _*)
   .jvmSettings(
