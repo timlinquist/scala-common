@@ -31,7 +31,7 @@ object SimpleDateTime {
               (\d\d?)              # hours
               :(\d\d?)             # minutes
               (?::(\d\d?))?        # seconds
-              (?:\.(\d*))?         # seconds fraction
+              (?:\.(\d{0,9}))?     # seconds fraction
               (?:                  # optional Time Zone
                 (?:[\ \t]*)?       # optional time zone separation
                 (
@@ -44,7 +44,7 @@ object SimpleDateTime {
           )?
    */
   private val timeRegex =
-    """(\d{4})-(\d\d?)-(\d\d?)(?:(?:[Tt]|[\ \t]+)(\d\d?):(\d\d?)(?::(\d\d?))?(?:\.(\d*))?(?:(?:[\ \t]*)?(Z|([-+]\d\d?)(?::(\d\d?))?))?)?""".r
+    """(\d{4})-(\d\d?)-(\d\d?)(?:(?:[Tt]|[\ \t]+)(\d\d?):(\d\d?)(?::(\d\d?))?(?:\.(\d{0,9}))?(?:(?:[\ \t]*)?(Z|([-+]\d\d?)(?::(\d\d?))?))?)?""".r
 
   private def toInt(s: String): Int = if (s == null || s.isEmpty) 0 else parseInt(s)
 
