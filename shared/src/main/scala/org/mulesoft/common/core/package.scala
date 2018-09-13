@@ -1,6 +1,7 @@
 package org.mulesoft.common
 
 import java.lang.Character._
+import java.net.IDN
 
 package object core {
 
@@ -12,6 +13,12 @@ package object core {
     /** If the String is not null returns the String, else returns "". */
     def notNull: String = if (str == null) "" else str
 
+    /** Check if the String is null or empty */
+    def isNullOrEmpty: Boolean = str == null || str.isEmpty
+
+    /** Check if the String is not null and non empty */
+    def nonNullNorEmpty: Boolean = str != null && !str.isEmpty
+
     /** Returns the number of occurrences of a given char into an String. */
     def count(c: Char): Int = {
       if (str == null) return 0
@@ -19,67 +26,6 @@ package object core {
       for (i <- 0 until str.length)
         if (str.charAt(i) == c) result += 1
       result
-    }
-
-    def hex(ch: Int): String = Integer.toHexString(ch).toUpperCase
-
-
-    // Adapted from Apache Commons
-    // https://commons.apache.org/proper/commons-lang/javadocs/api-2.6/src-html/org/apache/commons/lang/StringEscapeUtils.html#line.158
-    def escapeJavaStyleString(str: String): String = {
-
-      if (str == null) {
-        str
-      } else {
-        val out = new StringBuilder(2 * str.length)
-        for {
-          i <- Range(0, str.length)
-        } {
-          val ch = str.charAt(i)
-
-          if (ch > 0xfff) out ++= ("\\u" + hex(ch))
-          else if (ch > 0xff) out ++= ("\\u0" + hex(ch))
-          else if (ch > 0x7f) out ++= ("\\u00" + hex(ch))
-          else if (ch < 32) ch match {
-            case '\b' =>
-              out += '\\'
-              out += 'b'
-            case '\n' =>
-              out += '\\'
-              out += 'n'
-            case '\t' =>
-              out += '\\'
-              out += 't'
-            case '\f' =>
-              out += '\\'
-              out += 'f'
-            case '\r' =>
-              out += '\\'
-              out += 'r'
-            case _ =>
-              if (ch == 0) out ++= "\\0"
-              else if (ch > 0xf) out ++=("\\u00" + hex(ch))
-              else out ++= ("\\u000" + hex(ch))
-          }
-          else ch match {
-            // case '\'' =>
-            //  out += '\\'
-            //  out += '\''
-            case '"' =>
-              out += '\\'
-              out += '"'
-            case '\\' =>
-              out += '\\'
-              out += '\\'
-            // case '/' =>
-            //  out += '\\'
-            //  out += '/'
-            case _ =>
-              out += ch
-          }
-        }
-        out.mkString
-      }
     }
 
     /** Parse a String with escape sequences. */
@@ -132,9 +78,53 @@ package object core {
       buffer.toString
     }
 
-
-    def encode: String = escapeJavaStyleString(str)
-
+    def encode: String = {
+      var f = firstEscaped
+      if (f == -1) str
+      else {
+        val out = new StringBuilder(2 * str.length)
+        out ++= str.substring(0, f)
+        while (f < str.length) {
+          val ch = str.charAt(f)
+          if (ch < 32) {
+            out += '\\'
+            ch match {
+              case '\b' => out += 'b'
+              case '\n' => out += 'n'
+              case '\t' => out += 't'
+              case '\f' => out += 'f'
+              case '\r' => out += 'r'
+              case 0    => out += '0'
+              case _    => out ++= "u00" + (if (ch > 0xf) "" else "0") + ch.toHexString
+            }
+          }
+          else if (ch < 0x7F) {
+            if (ch == '"' || ch == '\\') out += '\\'
+            out += ch
+          }
+          else {
+            out ++= "\\u"
+            if (ch <= 0xfff) {
+              if (ch > 0xff) out += '0' else out ++= "00"
+            }
+            out ++= ch.toHexString
+          }
+          f += 1
+        }
+        out.toString
+      }
+    }
+    private def firstEscaped: Int =
+      if (str == null) -1
+      else {
+        var i      = 0
+        val length = str.length
+        while (i < length) {
+          if (str.charAt(i).needsToBeEscaped) return i
+          i += 1
+        }
+        -1
+      }
 
     /** Compare two Strings ignoring the spaces in each */
     def equalsIgnoreSpaces(str2: String): Boolean = {
@@ -160,16 +150,18 @@ package object core {
 
     /** Interpreting the string as a file name replace The extension */
     def replaceExtension(newExt: String): String = {
-        val lastDot = str.lastIndexOf('.')
-        val ext = if (newExt == null || newExt.isEmpty) "" else if (newExt(0) != '.') '.' + newExt else newExt
-        if (lastDot == -1) str + ext else str.substring(0, lastDot) + ext
+      val lastDot = str.lastIndexOf('.')
+      val ext     = if (newExt.isNullOrEmpty) "" else if (newExt(0) != '.') '.' + newExt else newExt
+      if (lastDot == -1) str + ext else str.substring(0, lastDot) + ext
     }
 
     /** Add quotes to the string. If the string already has quotes, returns the same string */
-    def quoted: String = {
-      if (str.startsWith("\"") && str.endsWith("\"")) str
-      else s""""$str""""
-    }
+    def quoted: String = if (str.startsWith("\"") && str.endsWith("\"")) str else '"' + str + '"'
+
+    /** Returns true if all characters are ascii */
+    def isOnlyAscii: Boolean = str.isNullOrEmpty || str.forall(_.isAscii)
+
+    def toPunnycode: String = if (isOnlyAscii) str else IDN.toASCII(str)
   }
 
   private def decodeUnicodeChar(str: String, from: Int, to: Int, ignoreErrors: Boolean): String = {
@@ -177,8 +169,8 @@ package object core {
     for (i <- from until to) {
       val n = if (i < str.length) digit(str.charAt(i), 16) else -1
       if (n == -1) {
-          if (ignoreErrors) return str.substring(i, Math.min(to, str.length))
-          throw new IllegalArgumentException("Malformed unicode encoding: " + str)
+        if (ignoreErrors) return str.substring(i, Math.min(to, str.length))
+        throw new IllegalArgumentException("Malformed unicode encoding: " + str)
       }
       value = (value << 4) | n
     }
@@ -190,5 +182,19 @@ package object core {
     var i = 0
     while (predicate(i)) i = i + 1
     i
+  }
+
+  /** Common utilities to deal with Characters */
+  implicit class Chars(val chr: Char) extends AnyVal {
+
+    /** Convert to an Hexadecimal String (In Uppercase) */
+    def toHexString: String = Integer.toHexString(chr).toUpperCase
+
+    /** It is an Hexadecimal Digit */
+    def isHexDigit: Boolean = chr.isDigit || chr >= 'A' && chr <= 'F' || chr >= 'a' && chr <= 'f'
+
+    @inline def needsToBeEscaped: Boolean = chr < ' ' || chr >= 0x7F || chr == '\\'
+    @inline def isAscii: Boolean          = chr <= 0x7F
+
   }
 }
