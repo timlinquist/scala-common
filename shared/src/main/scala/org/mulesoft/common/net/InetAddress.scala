@@ -1,6 +1,7 @@
 package org.mulesoft.common.net
 import java.lang.Integer.parseInt
 
+import org.mulesoft.common.core._
 import org.mulesoft.common.parse.ParseError
 import org.mulesoft.common.parse.ParseError.{formatError, rangeError}
 
@@ -34,6 +35,8 @@ object InetAddress {
   def parseAsIPv6(address: String): Either[ParseError, InetAddress] = {
 
     def split(s: String) = if (s.isEmpty) Array("0") else s.split(':')
+
+    if (address.isNullOrEmpty) return formatError(address)
 
     // Check double colon (Compressed Zeroes)
     val doubleColon = address.indexOf("::")

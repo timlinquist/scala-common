@@ -39,6 +39,8 @@ trait NetTest extends FunSuite with Matchers {
     isValid("1a_f.xft") shouldBe false
     isValid("a-" * 30 + "a.com") shouldBe true
     isValid("a-" * 40 + "a.com") shouldBe false
+    isValid("localhost", allowLocal = true) shouldBe true
+    isValid("localhost") shouldBe false
     isValid(null) shouldBe false
   }
   test("email") {
@@ -73,11 +75,11 @@ trait NetTest extends FunSuite with Matchers {
     parse("john.").isRight shouldBe false
     parse(null).isRight shouldBe false
 
-    the [ParseException] thrownBy {
+    the[ParseException] thrownBy {
       Email("john..doe@example.com")
     } should have message "Format Error (Invalid User) in 'john..doe'"
 
-    a [ParseException] should be thrownBy Email("John..doe", "example.com")
+    a[ParseException] should be thrownBy Email("John..doe", "example.com")
 
     Email("jj@example.com") match {
       case Email(user, domain) =>
