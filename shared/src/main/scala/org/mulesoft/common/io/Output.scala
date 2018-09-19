@@ -2,7 +2,7 @@ package org.mulesoft.common.io
 import java.io.Writer
 
 /**
-  * An Output is a type class for defining classes to ouput to like [[java.io.Writer]] or [[java.io.OutputStream]]
+  * An Output is a type class for defining classes to ouput to like java.io.Writer or java.io.OutputStream
   *
   */
 trait Output[W] {
