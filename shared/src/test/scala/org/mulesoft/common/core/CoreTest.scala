@@ -40,6 +40,8 @@ trait CoreTest extends FunSuite with Matchers {
     s3.isNullOrEmpty shouldBe true
   }
   test("encoded strings") {
+    "ab\"c".encode shouldBe "ab\\\"c"
+
     val code = "a\\u00F3\\\\\\b\\n\\r\\t\\fpi\\u03A0\\u13A0\\0quote\\\"\\u0001\\u001F"
     code.decode shouldBe "aó\\\b\n\r\t\fpi\u03A0\u13A0\u0000quote\"\u0001\u001F"
     val encoded = code.decode.encode

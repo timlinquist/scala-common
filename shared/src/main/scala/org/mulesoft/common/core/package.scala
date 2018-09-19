@@ -204,7 +204,7 @@ package object core {
     /** It is an Hexadecimal Digit */
     def isHexDigit: Boolean = chr.isDigit || chr >= 'A' && chr <= 'F' || chr >= 'a' && chr <= 'f'
 
-    @inline def needsToBeEscaped: Boolean = chr < ' ' || chr >= 0x7F || chr == '\\'
+    @inline def needsToBeEscaped: Boolean = chr < ' ' || chr >= 0x7F || chr == '\\' || chr == '"'
     @inline def isAscii: Boolean          = chr <= 0x7F
 
   }
