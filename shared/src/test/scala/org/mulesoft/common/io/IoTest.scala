@@ -1,5 +1,8 @@
 package org.mulesoft.common.io
 
+import java.io.StringWriter
+
+import org.mulesoft.common.io.Output._
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FunSuite, Matchers}
 
@@ -60,6 +63,12 @@ trait IoTest extends FunSuite with BaseIoTest {
     an[Exception] should be thrownBy (fs.syncFile(targetDirName) / helloFileName).read()
   }
 
+  test("output") {
+    val w = new StringWriter()
+    write10(w)
+    w.toString shouldBe "1,2,3,4,5,6,7,8,9,10"
+  }
+
   private def runTest(parent2: String, parts: List[String]) = {
     val name2 = parent2 + "/file.x"
     testParts(fs.syncFile(name2), name2, parent2, parts)
@@ -82,7 +91,15 @@ trait IoTest extends FunSuite with BaseIoTest {
     l shouldBe parts
   }
 
+  def write10[O: Output](output: O): Unit = {
+    for (i <- 1 to 10) {
+      output.append(i.toString)
+      if (i != 10) output.append(",")
+    }
+  }
+
 }
+
 trait BaseIoTest extends Matchers with ScalaFutures {
   def fs: FileSystem
 
