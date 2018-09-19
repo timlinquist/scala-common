@@ -187,6 +187,17 @@ package object core {
   /** Common utilities to deal with Characters */
   implicit class Chars(val chr: Char) extends AnyVal {
 
+    /** Return an String with n repetitions of the current char */
+    def repeat (n: Int): String = if (n == 0) "" else {
+      val buf = new Array[Char](n)
+      var i = 0
+      while (i < n) {
+        buf(i) = chr
+        i += 1
+      }
+      new String(buf)
+    }
+
     /** Convert to an Hexadecimal String (In Uppercase) */
     def toHexString: String = Integer.toHexString(chr).toUpperCase
 

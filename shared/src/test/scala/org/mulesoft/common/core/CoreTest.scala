@@ -2,6 +2,7 @@ package org.mulesoft.common.core
 
 import org.scalatest.{FunSuite, Matchers}
 
+import org.mulesoft.common.core._
 /**
   * Test Core Methods.
   */
@@ -78,6 +79,8 @@ trait CoreTest extends FunSuite with Matchers {
     'c'.isHexDigit shouldBe true
     'x'.isHexDigit shouldBe false
 
+    ' ' repeat 0 shouldBe ""
+    '!' repeat 5 shouldBe "!!!!!"
   }
 
 }
