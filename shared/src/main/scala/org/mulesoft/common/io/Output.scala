@@ -75,4 +75,6 @@ case class LimitedStringBuffer(limit: Int) {
   }
 }
 
+@JSExportAll
+@JSExportTopLevel("org.mulesoft.common.io.LimitReachedException")
 case class LimitReachedException() extends Exception()
