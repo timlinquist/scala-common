@@ -69,6 +69,16 @@ trait IoTest extends FunSuite with BaseIoTest {
     w.toString shouldBe "1,2,3,4,5,6,7,8,9,10"
   }
 
+  test("output with limit") {
+    val w = LimitedStringBuffer(17)
+
+    an[LimitReachedException] should be thrownBy {
+      write10(w)
+    }
+
+    w.toString shouldBe "1,2,3,4,5,6,7,8,9"
+  }
+
   private def runTest(parent2: String, parts: List[String]) = {
     val name2 = parent2 + "/file.x"
     testParts(fs.syncFile(name2), name2, parent2, parts)

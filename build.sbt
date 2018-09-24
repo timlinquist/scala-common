@@ -6,7 +6,7 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
       Common.settings ++ Common.publish ++ Seq(
           organization := "org.mule.common",
           name := "scala-common",
-          version := "0.3.3",
+          version := "0.3.4",
           libraryDependencies ++= Seq(
               "org.scalactic" %%% "scalactic" % "3.0.1" % Test,
               "org.scalatest" %%% "scalatest" % "3.0.0" % Test
@@ -14,4 +14,5 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
           credentials ++= Common.credentials()
       )
   )
+  .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided")
   .jsSettings(scalaJSModuleKind := ModuleKind.CommonJSModule)

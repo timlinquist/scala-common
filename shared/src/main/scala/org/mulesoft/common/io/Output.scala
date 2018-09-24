@@ -1,8 +1,12 @@
 package org.mulesoft.common.io
+
 import java.io.Writer
 
+import scala.language.implicitConversions
+import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+
 /**
-  * An Output is a type class for defining classes to ouput to like java.io.Writer or java.io.OutputStream
+  * An Output is a type class for defining classes to output to like java.io.Writer or java.io.OutputStream
   *
   */
 trait Output[W] {
@@ -19,7 +23,7 @@ trait Output[W] {
 object Output {
 
   /** OutputOps implements operations on W:Output mostly by delegation to the Output[W] trait */
-  implicit class OutputOps[W](val w: W) extends AnyVal {
+  implicit class OutputOps[W](val w: W) {
 
     def append(s: String)(implicit o: Output[W]): Unit = o.append(w, s)
     def append(c: Char)(implicit o: Output[W]): Unit   = o.append(w, c)
@@ -44,4 +48,31 @@ object Output {
   }
 
   implicit def outputWriter[W <: Writer]: Output[W] = OutputWriter.asInstanceOf[Output[W]]
+
+  implicit object StringBufferWriter extends Output[LimitedStringBuffer] {
+
+    override def append(w: LimitedStringBuffer, s: String): Unit = w.append(s)
+
+    override def close(w: LimitedStringBuffer): Unit = Unit
+  }
+
+  implicit def stringBufferWriter[W <: LimitedStringBuffer]: Output[W] = StringBufferWriter.asInstanceOf[Output[W]]
 }
+
+@JSExportAll
+@JSExportTopLevel("org.mulesoft.common.io.LimitedStringBuffer")
+case class LimitedStringBuffer(limit: Int) {
+  private val buf: StringBuffer = new StringBuffer()
+
+  def length: Int = buf.length()
+
+  override def toString: String = buf.toString
+
+  def append(s: String): this.type = {
+    if(s.length + length > limit) throw LimitReachedException()
+    buf.append(s)
+    this
+  }
+}
+
+case class LimitReachedException() extends Exception()
