@@ -51,7 +51,7 @@ object Output {
 
   implicit object StringBufferWriter extends Output[LimitedStringBuffer] {
 
-    override def append(w: LimitedStringBuffer, s: String): Unit = w.append(s)
+    override def append(w: LimitedStringBuffer, s: CharSequence): Unit = w.append(s)
 
     override def close(w: LimitedStringBuffer): Unit = Unit
   }
@@ -68,7 +68,7 @@ case class LimitedStringBuffer(limit: Int) {
 
   override def toString: String = buf.toString
 
-  def append(s: String): this.type = {
+  def append(s: CharSequence): this.type = {
     if(s.length + length > limit) throw LimitReachedException()
     buf.append(s)
     this
