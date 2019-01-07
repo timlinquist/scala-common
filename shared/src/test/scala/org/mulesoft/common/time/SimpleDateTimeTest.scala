@@ -39,8 +39,12 @@ trait SimpleDateTimeTest extends FunSuite with Matchers with OptionValues {
       case SimpleDateTime(s) => fail("Should not match")
       case _                 =>
     }
-    parse("2015-02-28T11:00:00.123456789Z").toOption.value shouldBe
-      SimpleDateTime(2015, 2, 28, TimeOfDay(11, 0, 0, 123456789), 0)
+    "2015-02-28T11:00:00.123456789Z" match {
+      case SimpleDateTime(s) => s shouldBe SimpleDateTime(2015, 2, 28, TimeOfDay(11, 0, 0, 123456789), 0)
+    }
+    "2015-02-28T11:00:00.1Z" match {
+      case SimpleDateTime(s) => s shouldBe SimpleDateTime(2015, 2, 28, TimeOfDay(11, 0, 0, 100000000), 0)
+    }
 
     parse("2015-02-28T11:00:00.1234567890Z").left.get shouldBe FormatError("2015-02-28T11:00:00.1234567890Z")
 
