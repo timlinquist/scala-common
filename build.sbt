@@ -7,8 +7,8 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
           organization := "org.mule.common",
           name := "scala-common",
           version := {
-            val major = 5
-            val minor = 0
+            val major = 0
+            val minor = 5
 
             lazy val build  = sys.env.getOrElse("BUILD_NUMBER", "0")
             lazy val branch = sys.env.get("BRANCH_NAME")
