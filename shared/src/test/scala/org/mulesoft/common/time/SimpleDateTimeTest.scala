@@ -56,8 +56,8 @@ trait SimpleDateTimeTest extends FunSuite with Matchers with OptionValues {
     parseDate("2010-10-31").toOption.value shouldBe SimpleDateTime(2010, 10, 31)
     parseDate("2000-02-29").toOption.value shouldBe SimpleDateTime(2000, 2, 29)
     parseDate("1500-02-29").toOption.value shouldBe SimpleDateTime(1500, 2, 29)
-    parseDate("2015-02-28T11:00:00").left.get shouldBe FormatError("2015-02-28T11:00:00")
-    parseDate("2015/02/28").left.get.message shouldBe "Format Error in '2015/02/28'"
+    parseDate("2344-02-29").toOption.value shouldBe SimpleDateTime(2344, 2, 29)
+
     parseDate("2015-22-28").left.get shouldBe RangeError(22)
     parseDate("2015-12-32").left.get shouldBe RangeError(32)
     parseDate("0000-12-32").left.get shouldBe RangeError(0)
@@ -65,6 +65,9 @@ trait SimpleDateTimeTest extends FunSuite with Matchers with OptionValues {
     parseDate("2015-02-30").left.get shouldBe RangeError(30)
     parseDate("2015-02-29").left.get shouldBe RangeError(29)
     parseDate("1900-02-29").left.get shouldBe RangeError(29)
+
+    parseDate("2015-02-28T11:00:00").left.get shouldBe FormatError("2015-02-28T11:00:00")
+    parseDate("2015/02/28").left.get.message shouldBe "Format Error in '2015/02/28'"
   }
 
   test("parse partial time") {
