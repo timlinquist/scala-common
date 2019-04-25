@@ -6,7 +6,18 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
       Common.settings ++ Common.publish ++ Seq(
           organization := "org.mule.common",
           name := "scala-common",
-          version := "0.5.0-SNAPSHOT",
+          version := {
+            val major = 5
+            val minor = 0
+
+            lazy val build  = sys.env.getOrElse("BUILD_NUMBER", "0")
+            lazy val branch = sys.env.get("BRANCH_NAME")
+
+            if (branch.contains("master"))
+              major.toString + "." + minor.toString + "." + build
+            else
+              major.toString + "." + (minor + 1).toString + ".0-SNAPSHOT"
+          },
           libraryDependencies ++= Seq(
               "org.scalactic" %%% "scalactic" % "3.0.1" % Test,
               "org.scalatest" %%% "scalatest" % "3.0.0" % Test
