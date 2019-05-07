@@ -145,7 +145,7 @@ object Diff {
       * Computes the difference between the 2 strings split by end of line and returns it as a
       * List of Delta objects.
       */
-    def diff(a: String, b: String): List[Delta[String]] = diff(a.lines.toList, b.lines.toList)
+    def diff(a: String, b: String): List[Delta[String]] = diff(a.linesIterator.toList, b.linesIterator.toList)
 
     override protected def extractSubList(a: Array[String], from: Int, to: Int): Array[String] = {
       val ts = super.extractSubList(a, from, to)
