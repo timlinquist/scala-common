@@ -28,8 +28,8 @@ object Output {
     def append(s: CharSequence)(implicit o: Output[W]): Unit = o.append(w, s)
     def append(c: Char)(implicit o: Output[W]): Unit         = o.append(w, c)
 
-    def write(w: W, cbuf: Array[Char], off: Int, len: Int)(implicit o: Output[W]): Unit = o.write(w, cbuf, off, len)
-    def write(w: W, cbuf: Array[Char])(implicit o: Output[W]): Unit                     = o.write(w, cbuf)
+    def write(cbuf: Array[Char], off: Int, len: Int)(implicit o: Output[W]): Unit = o.write(w, cbuf, off, len)
+    def write(cbuf: Array[Char])(implicit o: Output[W]): Unit                     = o.write(w, cbuf)
 
     def close(implicit o: Output[W]): Unit = o.close(w)
     def flush(implicit o: Output[W]): Unit = o.flush(w)

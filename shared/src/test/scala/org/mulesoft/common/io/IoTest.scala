@@ -67,6 +67,9 @@ trait IoTest extends FunSuite with BaseIoTest {
     val w = new StringWriter()
     write10(w)
     w.toString shouldBe "1,2,3,4,5,6,7,8,9,10"
+    val a = w.toString.toCharArray
+    writeBuf(w, a)
+    w.toString shouldBe "1,2,3,4,5,6,7,8,9,10,1,2,3,4,5,6,7,8,9,10"
   }
 
   test("output with limit") {
@@ -104,9 +107,15 @@ trait IoTest extends FunSuite with BaseIoTest {
   def write10[O: Output](output: O): Unit = {
     for (i <- 1 to 10) {
       output.append(i.toString)
-      if (i != 10) output.append(",")
+      if (i != 10) output.append(',')
     }
   }
+
+  def writeBuf[O: Output](output: O, a: Array[Char]) : Unit = {
+    output.write(a, 1, 1)
+    output.write(a)
+  }
+
 
 }
 
