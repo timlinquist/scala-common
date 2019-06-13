@@ -24,3 +24,6 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   )
   .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided")
   .jsSettings(scalaJSModuleKind := ModuleKind.CommonJSModule)
+
+lazy val commonJVM = common.jvm.in(file("./jvm"))
+lazy val commonJS  = common.js.in(file("./js"))

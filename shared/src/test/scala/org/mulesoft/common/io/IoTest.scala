@@ -4,7 +4,7 @@ import java.io.StringWriter
 
 import org.mulesoft.common.io.Output._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FunSuite, Matchers}
+import org.scalatest.{Assertion, FunSuite, Matchers}
 
 import scala.language.higherKinds
 
@@ -52,7 +52,7 @@ trait IoTest extends FunSuite with BaseIoTest {
     hello.delete
   }
   test("File parts") {
-    runTest("/home/john/dir", List("/", "home", "john", "dir", "file.x"))
+    runTest(s"${sep}home${sep}john${sep}dir", List(sep, "home", "john", "dir", "file.x"))
     runTest("dir", List("dir", "file.x"))
     val f = fs syncFile ""
     f.path shouldBe ""
@@ -82,13 +82,13 @@ trait IoTest extends FunSuite with BaseIoTest {
     w.toString shouldBe "1,2,3,4,5,6,7,8,9"
   }
 
-  private def runTest(parent2: String, parts: List[String]) = {
-    val name2 = parent2 + "/file.x"
+  private def runTest(parent2: String, parts: List[String]): Assertion = {
+    val name2 = parent2 + s"${sep}file.x"
     testParts(fs.syncFile(name2), name2, parent2, parts)
     testParts(fs.asyncFile(name2), name2, parent2, parts)
   }
 
-  private def testParts(file: File, name: String, parent: String, parts: List[String]): Any = {
+  private def testParts(file: File, name: String, parent: String, parts: List[String]): Assertion = {
     file.path shouldBe name
     file.toString shouldBe name
     file.name shouldBe "file.x"
@@ -111,23 +111,25 @@ trait IoTest extends FunSuite with BaseIoTest {
     }
   }
 
-  def writeBuf[O: Output](output: O, a: Array[Char]) : Unit = {
+  def writeBuf[O: Output](output: O, a: Array[Char]): Unit = {
     output.write(a, 1, 1)
     output.write(a)
   }
-
 
 }
 
 trait BaseIoTest extends Matchers with ScalaFutures {
   def fs: FileSystem
+  val sep: String = fs.separatorChar.toString
 
-  val dirName          = "shared/src/test/data"
-  val targetDirName    = "target/test"
+  val dirName          = s"shared${sep}src${sep}test${sep}data"
+  val targetDirName    = s"target${sep}test"
   val helloFileName    = "helloWorld.txt"
   val helloIsoFileName = "helloWorld.iso"
   val dirList          = List(helloIsoFileName, helloFileName)
-
-  val helloString   = "Hello World!\n¡Hola Mundo!\n"
+  val helloString: String =
+    """Hello World!
+      |¡Hola Mundo!
+      |""".stripMargin
   val LatinEncoding = "latin1"
 }
