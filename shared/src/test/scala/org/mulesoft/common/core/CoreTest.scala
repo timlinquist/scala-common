@@ -75,6 +75,13 @@ trait CoreTest extends FunSuite with Matchers {
     unquoted.quoted.shouldBe(quoted)
     quoted.quoted.shouldBe(quoted)
   }
+
+  test("strip spaces") {
+    "Hello World".stripSpaces shouldBe "HelloWorld"
+    "Hello".stripSpaces shouldBe "Hello"
+    " Hello    World ".stripSpaces shouldBe "HelloWorld"
+  }
+
   test("chars") {
     '0'.isHexDigit shouldBe true
     'C'.isHexDigit shouldBe true

@@ -25,7 +25,7 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided")
   .jsSettings(
     scalaJSModuleKind := ModuleKind.CommonJSModule,
-    scalacOptions ++= Seq("-P:scalajs:suppressExportDeprecations")
+    scalacOptions += "-P:scalajs:suppressExportDeprecations"
   )
 
 lazy val commonJVM = common.jvm.in(file("./jvm"))

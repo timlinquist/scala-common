@@ -97,12 +97,10 @@ package object core {
               case 0    => out += '0'
               case _    => out ++= "u00" + (if (ch > 0xf) "" else "0") + ch.toHexString
             }
-          }
-          else if (ch < 0x7F) {
+          } else if (ch < 0x7F) {
             if (ch == '"' || ch == '\\') out += '\\'
             out += ch
-          }
-          else {
+          } else {
             out ++= "\\u"
             if (ch <= 0xfff) {
               if (ch > 0xff) out += '0' else out ++= "00"
@@ -148,6 +146,21 @@ package object core {
       true
     }
 
+    def stripSpaces: String =
+      if (str.isNullOrEmpty) str
+      else if (!str.contains(' ')) str
+      else {
+        val len = str.length
+        val result = new StringBuilder(len)
+        var i = 0
+        while (i < len) {
+          val c = str.charAt(i)
+          if (c != ' ') result.append(c)
+          i += 1
+        }
+        result.result()
+      }
+
     /** Interpreting the string as a file name replace The extension */
     def replaceExtension(newExt: String): String = {
       val lastDot = str.lastIndexOf('.')
@@ -188,15 +201,17 @@ package object core {
   implicit class Chars(val chr: Char) extends AnyVal {
 
     /** Return an String with n repetitions of the current char */
-    def repeat (n: Int): String = if (n == 0) "" else {
-      val buf = new Array[Char](n)
-      var i = 0
-      while (i < n) {
-        buf(i) = chr
-        i += 1
+    def repeat(n: Int): String =
+      if (n == 0) ""
+      else {
+        val buf = new Array[Char](n)
+        var i   = 0
+        while (i < n) {
+          buf(i) = chr
+          i += 1
+        }
+        new String(buf)
       }
-      new String(buf)
-    }
 
     /** Convert to an Hexadecimal String (In Uppercase) */
     def toHexString: String = Integer.toHexString(chr).toUpperCase
