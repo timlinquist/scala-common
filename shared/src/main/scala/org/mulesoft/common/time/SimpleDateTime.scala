@@ -5,7 +5,7 @@ import java.lang.Integer.parseInt
 import org.mulesoft.common.core._
 import org.mulesoft.common.parse.ParseError.formatError
 import org.mulesoft.common.parse._
-import org.mulesoft.common.time.SimpleDateTime.validateDate
+import org.mulesoft.common.time.SimpleDateTime.{validateDate, zoneOffsetToString}
 import org.mulesoft.common.time.TimeOfDay.validateTimeOfDay
 
 /**
@@ -17,10 +17,28 @@ case class SimpleDateTime(year: Int,
                           timeOfDay: Option[TimeOfDay] = None,
                           zoneOffset: Option[Int] = None) {
   validateDate(year, month, day)
+
+  override def toString: String = {
+    val date = f"$year%04d-$month%02d-$day%02d"
+    val time = timeOfDay.map("T" + _.toString).getOrElse("")
+    val zone = zoneOffset.map(zoneOffsetToString).getOrElse("")
+    date + time + zone
+  }
 }
 
 case class TimeOfDay(hour: Int, minute: Int = 0, second: Int = 0, nano: Int = 0) {
   validateTimeOfDay(hour, minute, second, nano)
+
+  override def toString: String = {
+    val intPart = f"$hour%02d:$minute%02d:$second%02d"
+    if (nano == 0) intPart
+    else {
+      val millis = (nano / 1000000.0).round.toInt
+      val m = if (millis % 100 == 0) millis/100 else if (millis % 10 == 0) millis/10 else millis
+      intPart + '.' + m
+    }
+  }
+
 }
 
 /**
@@ -100,13 +118,13 @@ object SimpleDateTime {
   def parse(str: String): Either[ParseError, SimpleDateTime] = str match {
     case dateTimeRegex(year, month, day, hours, minutes, seconds, nanos, z, offsetHours, offsetMinutes) =>
       either(
-          SimpleDateTime(
-              toInt(year),
-              toInt(month),
-              toInt(day),
-              if (hours == null) None else Some(buildTimeOfDay(hours, minutes, seconds, nanos)),
-              buildTimeZone(z, offsetHours, offsetMinutes)
-          ))
+        SimpleDateTime(
+          toInt(year),
+          toInt(month),
+          toInt(day),
+          if (hours == null) None else Some(buildTimeOfDay(hours, minutes, seconds, nanos)),
+          buildTimeZone(z, offsetHours, offsetMinutes)
+        ))
     case _ =>
       formatError(str)
 
@@ -143,7 +161,8 @@ object SimpleDateTime {
       else if (month < 1 || month > 12) month
       else if (day < 1 || day > 31) day
       else if (day == 31 && (month == 4 || month == 6 || month == 9 || month == 11)) day
-      else if (month == 2 && (day > 29 || day == 29 && (year % 4 != 0 || year >= 1600 && year % 100 == 0 && year % 400 != 0))) day
+      else if (month == 2 && (day > 29 || day == 29 && (year % 4 != 0 || year >= 1600 && year % 100 == 0 && year % 400 != 0)))
+        day
       else return
     throw ParseException(RangeError(offending))
   }
@@ -163,6 +182,16 @@ object SimpleDateTime {
       if (oh < -24 || oh > 24) throw ParseException(RangeError(oh))
       if (om < 0 || om > 60) throw ParseException(RangeError(om))
       Some(oh * 3600 + (if (oh < 0) -om else om) * 60)
+    }
+
+  private def zoneOffsetToString(zoneOffset: Int): String =
+    if (zoneOffset == 0) "Z"
+    else {
+      val hours = zoneOffset / 3600
+      val minutes = (zoneOffset/60) % 60
+      val sign = if (zoneOffset > 0) "+" else "-"
+      val mins = if (minutes == 0) "" else f":${minutes.abs}%02d"
+      f"$sign${hours.abs}%02d$mins"
     }
 
   private def either[T](r: => T): Either[ParseError, T] =
