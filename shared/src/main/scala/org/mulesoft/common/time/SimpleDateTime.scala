@@ -31,10 +31,13 @@ case class TimeOfDay(hour: Int, minute: Int = 0, second: Int = 0, nano: Int = 0)
 
   override def toString: String = {
     val intPart = f"$hour%02d:$minute%02d:$second%02d"
-    if (nano == 0) intPart
+    val millis  = (nano / 1000000.0).round.toInt
+    if (millis == 0) intPart
     else {
-      val millis = (nano / 1000000.0).round.toInt
-      val m = if (millis % 100 == 0) millis/100 else if (millis % 10 == 0) millis/10 else millis
+      val m =
+        if (millis % 100 == 0) (millis / 100).toString
+        else if (millis % 10 == 0) f"${millis / 10}%02d"
+        else f"$millis%03d"
       intPart + '.' + m
     }
   }
@@ -118,13 +121,13 @@ object SimpleDateTime {
   def parse(str: String): Either[ParseError, SimpleDateTime] = str match {
     case dateTimeRegex(year, month, day, hours, minutes, seconds, nanos, z, offsetHours, offsetMinutes) =>
       either(
-        SimpleDateTime(
-          toInt(year),
-          toInt(month),
-          toInt(day),
-          if (hours == null) None else Some(buildTimeOfDay(hours, minutes, seconds, nanos)),
-          buildTimeZone(z, offsetHours, offsetMinutes)
-        ))
+          SimpleDateTime(
+              toInt(year),
+              toInt(month),
+              toInt(day),
+              if (hours == null) None else Some(buildTimeOfDay(hours, minutes, seconds, nanos)),
+              buildTimeZone(z, offsetHours, offsetMinutes)
+          ))
     case _ =>
       formatError(str)
 
@@ -187,10 +190,10 @@ object SimpleDateTime {
   private def zoneOffsetToString(zoneOffset: Int): String =
     if (zoneOffset == 0) "Z"
     else {
-      val hours = zoneOffset / 3600
-      val minutes = (zoneOffset/60) % 60
-      val sign = if (zoneOffset > 0) "+" else "-"
-      val mins = if (minutes == 0) "" else f":${minutes.abs}%02d"
+      val hours   = zoneOffset / 3600
+      val minutes = (zoneOffset / 60) % 60
+      val sign    = if (zoneOffset > 0) "+" else "-"
+      val mins    = if (minutes == 0) "" else f":${minutes.abs}%02d"
       f"$sign${hours.abs}%02d$mins"
     }
 

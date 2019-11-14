@@ -63,7 +63,11 @@ trait SimpleDateTimeTest extends FunSuite with Matchers with OptionValues {
         s shouldBe SimpleDateTime(2015, 2, 28, TimeOfDay(11, 0, 0, 100000000), 0)
         s.toString shouldBe "2015-02-28T11:00:00.1Z"
     }
-
+    "2019-01-07T11:00:00.05" match {
+      case SimpleDateTime(s) =>
+        s shouldBe SimpleDateTime(2019, 1, 7, TimeOfDay(11, 0, 0, 50 *1000 * 1000))
+        s.toString shouldBe "2019-01-07T11:00:00.05"
+    }
     parse("2015-02-28T11:00:00.1234567890Z").left.get shouldBe FormatError("2015-02-28T11:00:00.1234567890Z")
 
     parseFullTime("xxx").isLeft shouldBe true
