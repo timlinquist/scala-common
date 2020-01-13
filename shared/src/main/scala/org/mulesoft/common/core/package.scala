@@ -79,6 +79,10 @@ package object core {
     }
 
     def encode: String = {
+      encode(encodeNonAscii = true)
+    }
+
+    def encode(encodeNonAscii: Boolean) = {
       var f = firstEscaped
       if (f == -1) str
       else {
@@ -100,18 +104,21 @@ package object core {
           } else if (ch < 0x7F) {
             if (ch == '"' || ch == '\\') out += '\\'
             out += ch
-          } else {
+          } else if (encodeNonAscii) {
             out ++= "\\u"
             if (ch <= 0xfff) {
               if (ch > 0xff) out += '0' else out ++= "00"
             }
             out ++= ch.toHexString
+          } else {
+            out += ch
           }
           f += 1
         }
         out.toString
       }
     }
+
     private def firstEscaped: Int =
       if (str == null) -1
       else {
@@ -150,9 +157,9 @@ package object core {
       if (str.isNullOrEmpty) str
       else if (!str.contains(' ')) str
       else {
-        val len = str.length
+        val len    = str.length
         val result = new StringBuilder(len)
-        var i = 0
+        var i      = 0
         while (i < len) {
           val c = str.charAt(i)
           if (c != ' ') result.append(c)
