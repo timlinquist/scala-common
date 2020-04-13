@@ -2,8 +2,7 @@ package org.mulesoft.common.io
 
 import org.mulesoft.common.io.JsBaseFile._
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.{ExecutionContext, Future, Promise}
 
 /**
   * Implementation of a AsyncFile for the JavaScript
@@ -14,12 +13,12 @@ protected class JsAsyncFile(fs: JsServerFileSystem, path: String) extends JsBase
   override def delete: Future[Unit] = {
     val promise = Promise[Unit]()
     JsFs.stat(path,
-            (err, s) =>
-              if (err != null) promise.success(())
-              else {
-                val rmOp = if (s.isDirectory()) JsFs.rmdir _ else JsFs.unlink _
-                rmOp(path, completeOrFail(promise, (), _))
-            })
+              (err, s) =>
+                if (err != null) promise.success(())
+                else {
+                  val rmOp = if (s.isDirectory()) JsFs.rmdir _ else JsFs.unlink _
+                  rmOp(path, completeOrFail(promise, (), _))
+              })
     promise.future
   }
 
@@ -29,27 +28,28 @@ protected class JsAsyncFile(fs: JsServerFileSystem, path: String) extends JsBase
     promise.future
   }
 
-  override def mkdir: Future[Unit] = {
+  override def mkdir(implicit ctx: ExecutionContext = global): Future[Unit] = {
     val promise = Promise[Unit]()
     JsFs.mkdir(path, completeOrFail(promise, (), _))
     promise.future
   }
 
-  override def read(encoding: String): Future[CharSequence] = {
+  override def read(encoding: String)(implicit ctx: ExecutionContext = global): Future[CharSequence] = {
     val promise = Promise[String]()
     JsFs.readFile(path, encoding, (err, data) => completeOrFail(promise, data.asInstanceOf[String], err))
     promise.future
   }
 
-  override def write(data: CharSequence, encoding: String): Future[Unit] = {
+  override def write(data: CharSequence, encoding: String)(implicit ctx: ExecutionContext = global): Future[Unit] = {
     val promise = Promise[Unit]()
     JsFs.writeFile(path, data.toString, encoding, completeOrFail(promise, (), _))
     promise.future
   }
 
-  override def exists: Future[Boolean]      = stat map (_.isDefined)
-  override def isDirectory: Future[Boolean] = stat map (checkStats(_, _.isDirectory()))
-  override def isFile: Future[Boolean]      = stat map (checkStats(_, _.isFile()))
+  override def exists(implicit ctx: ExecutionContext = global): Future[Boolean] = stat map (_.isDefined)
+  override def isDirectory(implicit ctx: ExecutionContext = global): Future[Boolean] =
+    stat map (checkStats(_, _.isDirectory()))
+  override def isFile(implicit ctx: ExecutionContext = global): Future[Boolean] = stat map (checkStats(_, _.isFile()))
 
   private def stat: Future[Option[Stats]] = {
     val promise = Promise[Option[Stats]]()

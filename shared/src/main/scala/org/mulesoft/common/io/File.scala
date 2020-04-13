@@ -1,13 +1,16 @@
 package org.mulesoft.common.io
 
 import org.mulesoft.common.core._
-import scala.concurrent.Future
+
+import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 
 /**
   * A File Object abstraction (Similar to java.util.File) but with implementations in Js and JVM.
   */
 trait File {
+
+  protected val global: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   /** Returns an async view of the file */
   def async: AsyncFile
@@ -54,22 +57,22 @@ protected[io] trait FileProto[F[_]] extends File {
   def list: F[Array[String]]
 
   /** Create a directory. */
-  def mkdir: F[Unit]
+  def mkdir(implicit ctx: ExecutionContext = global): F[Unit]
 
   /** Read the file. */
-  def read(encoding: String = Utf8): F[CharSequence]
+  def read(encoding: String = Utf8)(implicit ctx: ExecutionContext = global): F[CharSequence]
 
   /** Write to the file. */
-  def write(data: CharSequence, encoding: String = Utf8): F[Unit]
+  def write(data: CharSequence, encoding: String = Utf8)(implicit ctx: ExecutionContext = global): F[Unit]
 
   /** Returns true if the File exists */
-  def exists: F[Boolean]
+  def exists(implicit ctx: ExecutionContext = global): F[Boolean]
 
   /** Returns true if the File is a directory */
-  def isDirectory: F[Boolean]
+  def isDirectory(implicit ctx: ExecutionContext = global): F[Boolean]
 
   /** Returns true if the File is a normal File */
-  def isFile: F[Boolean]
+  def isFile(implicit ctx: ExecutionContext = global): F[Boolean]
 
 }
 
