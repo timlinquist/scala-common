@@ -93,24 +93,26 @@ package object core {
           if (ch < 32) {
             out += '\\'
             ch match {
-              case '\b' => out += 'b'
-              case '\n' => out += 'n'
-              case '\t' => out += 't'
-              case '\f' => out += 'f'
-              case '\r' => out += 'r'
-              case 0    => out += '0'
-              case _    => out ++= "u00" + (if (ch > 0xf) "" else "0") + ch.toHexString
+              case '\b'                => out += 'b'
+              case '\n'                => out += 'n'
+              case '\t'                => out += 't'
+              case '\f'                => out += 'f'
+              case '\r'                => out += 'r'
+              case _                   => out ++= "u00" + (if (ch > 0xf) "" else "0") + ch.toHexString
             }
-          } else if (ch < 0x7F) {
+          }
+          else if (ch < 0x7F) {
             if (ch == '"' || ch == '\\') out += '\\'
             out += ch
-          } else if (encodeNonAscii) {
+          }
+          else if (encodeNonAscii) {
             out ++= "\\u"
             if (ch <= 0xfff) {
               if (ch > 0xff) out += '0' else out ++= "00"
             }
             out ++= ch.toHexString
-          } else {
+          }
+          else {
             out += ch
           }
           f += 1
