@@ -43,7 +43,7 @@ trait CoreTest extends FunSuite with Matchers {
   test("encoded strings") {
     "ab\"c".encode shouldBe "ab\\\"c"
 
-    val code = "a\\u00F3\\\\\\b\\n\\r\\t\\fpi\\u03A0\\u13A0\\0quote\\\"\\u0001\\u001F"
+    val code = "a\\u00F3\\\\\\b\\n\\r\\t\\fpi\\u03A0\\u13A0\\u0000quote\\\"\\u0001\\u001F"
     code.decode shouldBe "aó\\\b\n\r\t\fpi\u03A0\u13A0\u0000quote\"\u0001\u001F"
     val encoded = code.decode.encode
     encoded shouldBe code
@@ -52,6 +52,10 @@ trait CoreTest extends FunSuite with Matchers {
   test("encoded non ascii strings") {
     "こんにちは".encode(encodeNonAscii = false) shouldBe "こんにちは"
     "こんにちは".encode shouldBe "\\u3053\\u3093\\u306B\\u3061\\u306F"
+  }
+
+  test("decode ascii nul character") {
+    Char.MinValue.toString.decode.encode shouldBe "\\u0000"
   }
 
   test("extended decode") {
