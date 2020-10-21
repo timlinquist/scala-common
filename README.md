@@ -26,7 +26,7 @@ Allows sync and async operations on both platforms.
 
 Provides a simple platform-independent container for DateTime elements with platform-specific extensions.
 
-## On development
+## In development
 
 - Jvm API and libraries
 - Js API and libraries
