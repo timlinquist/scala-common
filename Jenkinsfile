@@ -32,10 +32,13 @@ pipeline {
     }
     stage('Tag version') {
       when {
-        branch 'master'
+        anyOf {
+          branch 'master'
+          branch 'fix-tagging'
+        }
       }
       steps {
-        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'github-exchange', passwordVariable: 'GITHUB_PASS', usernameVariable: 'GITHUB_USER']]) {
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'github-salt', passwordVariable: 'GITHUB_PASS', usernameVariable: 'GITHUB_USER']]) {
           sh '''#!/bin/bash
                 echo "about to tag the commit with the new version:"
                 version=$(sbt version | tail -n 1 | grep -o '[0-9].[0-9].[0-9].*')
