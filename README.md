@@ -1,39 +1,34 @@
 # Scala Common
 
-Common utility code for:
-- core
-- ext
-- io
-- time
+The Scala Common project provides a Pure Scala common implementation that is platform-independent and has no dependencies on external libraries.
 
-This project aims to provide a pure-scala platform-independent common implementation with no dependencies to external libraries.
+This project includes common utility code for:
+- Core
+  
+  Provides basic utility methods to extend String and Char
 
-# Core
+- Ext
 
-Provides basic utility methods to extend String and char.
+  Provides diff capabilities
+  
+- Io
 
-# Ext
+  - Provides a common file system abstraction that is similar to `java.util.File` but includes implementations in JavaScript and JVM
+  - Allows synchronous and asynchronous operations on both platforms
 
-Provides Diff capabilities
+- Time
 
-# Io
+  Provides a simple platform-independent container for `DateTime` elements and includes platform-specific extensions
 
-Provides a common file system abstraction (similar to java.util.File) but with implementations in Js and JVM.
 
-Allows sync and async operations on both platforms.
+## In Development
 
-# Time
-
-Provides a simple platform-independent container for DateTime elements with platform-specific extensions.
-
-## In development
-
-- Jvm API and libraries
-- Js API and libraries
-- Improve documentations
+- JVM API and libraries
+- JavaScript API and libraries
+- Improve documentation 
 - Examples
-- Tests / Coverage
+- Tests and Coverage
 
-# Usage
+# Usage 
 
-Js or Jvm library dependency.
+JavaScript or JVM library dependency 
