@@ -8,7 +8,7 @@ import scala.language.higherKinds
 package object collections {
 
   /**
-    * Wrapper for type filtering for collections of type [[T[A]]]
+    * Wrapper for type filtering for collections of type T[A]
     * @param collection wrapped collection
     * @tparam T collection type
     * @tparam A collection member type
@@ -16,11 +16,11 @@ package object collections {
   implicit class FilterType[A, T[A] <: GenTraversableLike[A, T[A]]](collection: T[A]) {
 
     /**
-      * Filters elements from [[collection]] by type [[B]] where [[B]] is a subtype of [[A]]
+      * Filters elements from collection by type B where B is a subtype of A
       * @param tag implicit class tag to workaround type erasure
-      * @param bf builds the same input collection type [[T]] for the output [[T[B]]]
+      * @param bf builds the same input collection type T for the output T[B]
       * @tparam B type to filter
-      * @return collection with filtered members of [[collection]] of type [[B]]
+      * @return collection with filtered members of collection of type B
       */
     def filterType[B <: A](implicit tag: ClassTag[B], bf: CanBuildFrom[T[A], B, T[B]]): T[B] = collection.flatMap {
       case element: B => Some(element)
