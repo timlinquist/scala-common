@@ -22,9 +22,8 @@ package object collections {
       * @tparam B type to filter
       * @return collection with filtered members of collection of type B
       */
-    def filterType[B <: A](implicit tag: ClassTag[B], bf: CanBuildFrom[T[A], B, T[B]]): T[B] = collection.flatMap {
-      case element: B => Some(element)
-      case _          => None
+    def filterType[B <: A](implicit tag: ClassTag[B], bf: CanBuildFrom[T[A], B, T[B]]): T[B] = collection.collect {
+      case element: B => element
     }
   }
 
