@@ -4,10 +4,10 @@ import org.mulesoft.common.functional.MonadInstances._
 import org.scalatest.AsyncFunSuite
 import org.scalatest.Matchers.convertToAnyShouldWrapper
 
-trait CacheProxyTest extends AsyncFunSuite {
+trait CachedFunctionTest extends AsyncFunSuite {
   test("Cache proxy with context") {
-    val operation                               = (f: Float) => Option(Math.nextUp(f))
-    val proxy: CacheProxy[Float, Float, Option] = CacheProxy.forMonadic(operation)
+    val operation                                   = (f: Float) => Option(Math.nextUp(f))
+    val proxy: CachedFunction[Float, Float, Option] = CachedFunction.fromMonadic(operation)
 
     val areEqual = for {
       random1 <- proxy.runCached(1.0f)
@@ -20,8 +20,8 @@ trait CacheProxyTest extends AsyncFunSuite {
   }
 
   test("Cache proxy without context") {
-    val operation                                 = (f: Float) => Math.nextUp(f)
-    val proxy: CacheProxy[Float, Float, Identity] = CacheProxy.`for`(operation)
+    val operation                                     = (f: Float) => Math.nextUp(f)
+    val proxy: CachedFunction[Float, Float, Identity] = CachedFunction.from(operation)
 
     val random1 = proxy.runCached(1.0f)
     val random2 = proxy.runCached(1.0f)

@@ -2,20 +2,22 @@ package org.mulesoft.common.core
 
 import org.mulesoft.common.functional.Monad
 import org.mulesoft.common.functional.MonadInstances.Identity
-
 import scala.language.higherKinds
 
-/** Runs an operation proxied through a cache
-  * @tparam I input type of the operation
-  * @tparam O output type of the operation
+/** Runs a function I => O proxied through a cache
+  * @tparam I input type of the function
+  * @tparam O output type of the function
   * @tparam C context for the output type (e.g. Option)
   */
-trait CacheProxy[I, O, C[_]] {
+trait CachedFunction[I, O, C[_]] {
   protected val cache: Cache[I, O] = Cache.empty[I, O]
+
+  def invalidateCache(): Unit = cache.invalidate()
+
   /**
-    * Executes the [[run]] operation with caching. On cache hit returns the cached result it otherwise execute run and
+    * Executes the [[run]] function with caching. On cache hit returns the cached result it otherwise execute run and
     * store the result in the cache.
-    * @param i input for the [[run]] operation
+    * @param i input for the [[run]] function
     * @param monad monad for mapping over the result context
     * @return
     */
@@ -34,12 +36,12 @@ trait CacheProxy[I, O, C[_]] {
   def run: I => C[O]
 }
 
-object CacheProxy {
-  def forMonadic[I, O, C[_]](fn: I => C[O]): CacheProxy[I, O, C] = new CacheProxy[I, O, C] {
+object CachedFunction {
+  def fromMonadic[I, O, C[_]](fn: I => C[O]): CachedFunction[I, O, C] = new CachedFunction[I, O, C] {
     override def run: I => C[O] = fn
   }
 
-  def `for`[I, O](fn: I => Identity[O]): CacheProxy[I, O, Identity] = new CacheProxy[I, O, Identity] {
+  def from[I, O](fn: I => Identity[O]): CachedFunction[I, O, Identity] = new CachedFunction[I, O, Identity] {
     override def run: I => Identity[O] = fn
   }
 }

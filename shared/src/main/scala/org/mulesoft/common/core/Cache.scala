@@ -9,15 +9,14 @@ import scala.collection.mutable
   * @tparam O output type
   */
 class Cache[I, O] {
-  protected val map: mutable.HashMap[I, O] = mutable.HashMap.empty
+  protected var map: mutable.HashMap[I, O] = mutable.HashMap.empty
 
   def put(input: I, output: O): Unit = map.put(input, output)
   def get(input: I): Option[O]       = map.get(input)
   def remove(input: I): Unit         = map.remove(input)
+  def invalidate(): Unit             = map = mutable.HashMap.empty
 }
 
 object Cache {
   def empty[I, O] = new Cache[I, O]
 }
-
-
