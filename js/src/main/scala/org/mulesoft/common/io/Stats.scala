@@ -11,7 +11,7 @@ import scala.scalajs.js
 trait Stats extends js.Object {
   def dev: Int            = js.native
   def ino: Double         = js.native
-  def mode: Integer       = js.native
+  def mode: Int       = js.native
   def nlink: Int          = js.native
   def uid: Int            = js.native
   def gid: Int            = js.native

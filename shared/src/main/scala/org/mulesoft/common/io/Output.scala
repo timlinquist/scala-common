@@ -1,9 +1,8 @@
 package org.mulesoft.common.io
 
 import java.io.Writer
-
 import scala.language.implicitConversions
-import scala.scalajs.js.annotation.{JSExportAll, JSExportTopLevel}
+import scala.scalajs.js.annotation.{JSExport, JSExportAll, JSExportTopLevel}
 
 /**
   * An Output is a type class for defining classes to output to like java.io.Writer or java.io.OutputStream
@@ -59,13 +58,15 @@ object Output {
   implicit def stringBufferWriter[W <: LimitedStringBuffer]: Output[W] = StringBufferWriter.asInstanceOf[Output[W]]
 }
 
-@JSExportAll
 @JSExportTopLevel("org.mulesoft.common.io.LimitedStringBuffer")
 case class LimitedStringBuffer(limit: Int) {
+
   private val buf: StringBuffer = new StringBuffer()
 
+  @JSExport
   def length: Int = buf.length()
 
+  @JSExport
   override def toString: String = buf.toString
 
   def append(s: CharSequence): this.type = {
