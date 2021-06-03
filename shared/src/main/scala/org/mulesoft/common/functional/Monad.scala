@@ -19,4 +19,9 @@ object MonadInstances {
     override def pure[A](value: A): Identity[A]                                         = value
     override def flatMap[A, B](value: Identity[A])(func: A => Identity[B]): Identity[B] = func(value)
   }
+
+  implicit val seqMonad: Monad[Seq] = new Monad[Seq] {
+    override def pure[A](value: A): Seq[A] = Seq(value)
+    override def flatMap[A, B](value: Seq[A])(func: A => Seq[B]): Seq[B] = value.flatMap(func)
+  }
 }
