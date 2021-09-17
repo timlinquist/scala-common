@@ -1,7 +1,8 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
-version in ThisBuild := getVersion(1, 0)
-scalacOptions in ThisBuild ++= Seq("-feature")
+ThisBuild / version := getVersion(1, 0)
+ThisBuild / scalacOptions ++= Seq("-feature")
+ThisBuild / scalaVersion := "2.12.11"
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
