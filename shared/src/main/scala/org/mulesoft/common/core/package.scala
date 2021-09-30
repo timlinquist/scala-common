@@ -6,6 +6,10 @@ import java.net.IDN
 package object core {
 
   /**
+    * [3]	c-byte-order-mark	::=	#xFEFF
+    */
+  val BomMark = 0xFEFF
+  /**
     * Common utility methods to deal with Strings.
     */
   implicit class Strings(val str: String) extends AnyVal {
@@ -141,10 +145,10 @@ package object core {
       var j = 0
       while (i < str.length || j < str2.length) {
         val c1 = charAt(str, i)
-        if (c1.isWhitespace) i = i + 1
+        if (c1.isWhitespace || c1.isBom) i = i + 1
         else {
           val c2 = charAt(str2, j)
-          if (c2.isWhitespace) j = j + 1
+          if (c2.isWhitespace || c2.isBom) j = j + 1
           else {
             if (c1 != c2) return false
             i = i + 1
@@ -230,6 +234,7 @@ package object core {
 
     @inline def needsToBeEscaped: Boolean = chr < ' ' || chr >= 0x7F || chr == '\\' || chr == '"'
     @inline def isAscii: Boolean          = chr <= 0x7F
+    @inline def isBom: Boolean = chr == BomMark
 
   }
 }
