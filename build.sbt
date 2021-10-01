@@ -1,5 +1,4 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
-import sbtsonar.SonarPlugin.autoImport.sonarProperties
 
 version in ThisBuild := getVersion(1, 0)
 scalacOptions in ThisBuild ++= Seq("-feature")
@@ -21,7 +20,8 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(
     scalaJSModuleKind := ModuleKind.CommonJSModule,
     scalacOptions += "-P:scalajs:suppressExportDeprecations"
-  )
+  ).disablePlugins(SonarPlugin)
+
 
 lazy val commonJVM = common.jvm.in(file("./jvm"))
 lazy val commonJS  = common.js.in(file("./js"))
