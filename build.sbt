@@ -47,7 +47,6 @@ sonarProperties := Map(
   "sonar.sourceEncoding"             -> "UTF-8",
   "sonar.github.repository"          -> "aml-org/scala-common",
   "sonar.branch.name"                -> branch,
-  "sonar.scala.coverage.reportPaths" -> "jvm/target/scala-2.12/scoverage-report/scoverage.xml",
   "sonar.sources"                    -> "shared/src/main/scala",
   "sonar.tests"                      -> "shared/src/test/scala"
 )

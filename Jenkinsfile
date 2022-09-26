@@ -13,14 +13,14 @@ pipeline {
   stages {
     stage('Test') {
       steps {
-        sh 'sbt clean coverage test coverageReport'
+        sh 'sbt -mem 4096 -Dfile.encoding=UTF-8 clean coverage test coverageAggregate'
       }
     }
     stage('Coverage') {
       when {
         anyOf {
           branch 'master'
-          branch 'sonar-onboard'
+          branch 'clean-test-sonar'
         }
       }
       steps {
