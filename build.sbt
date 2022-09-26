@@ -2,7 +2,7 @@ import sbtcrossproject.CrossPlugin.autoImport.crossProject
 
 ThisBuild / version := getVersion(1, 0)
 ThisBuild / scalacOptions ++= Seq("-feature")
-ThisBuild / scalaVersion := "2.12.11"
+ThisBuild / scalaVersion := "2.12.13"
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
@@ -21,11 +21,11 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(
     scalaJSModuleKind := ModuleKind.CommonJSModule,
     scalacOptions += "-P:scalajs:suppressExportDeprecations"
-  ).disablePlugins(SonarPlugin)
+  )
 
 
 lazy val commonJVM = common.jvm.in(file("./jvm"))
-lazy val commonJS  = common.js.in(file("./js"))
+lazy val commonJS  = common.js.in(file("./js")).disablePlugins(SonarPlugin, ScoverageSbtPlugin)
 
 def getVersion(major: Int, minor: Int): String = {
 

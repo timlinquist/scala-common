@@ -25,7 +25,7 @@ protected class JvmSyncFile(val fileSystem: FileSystem, val path: String) extend
     val data = new Array[Char](file.length.toInt)
     val n    = fis.read(data)
     fis.close()
-    if (n == data.length) data else data.subSequence(0, n)
+    if (n == data.length) data.mkString else data.mkString.subSequence(0, n)
   }
 
   override def write(data: CharSequence, encoding: String)(implicit ctx: ExecutionContext = global): Unit = {
