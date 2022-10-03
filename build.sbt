@@ -1,7 +1,8 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtsonar.SonarPlugin.autoImport.sonarProperties
 
-ThisBuild / version := getVersion(1, 1)
+//ThisBuild / version := getVersion(1, 1)
+ThisBuild / version := "SCALA-BUMP-INTERNAL.1"
 ThisBuild / scalacOptions ++= Seq("-feature")
 ThisBuild / scalaVersion := "2.12.13"
 

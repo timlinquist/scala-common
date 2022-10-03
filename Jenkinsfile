@@ -37,6 +37,7 @@ pipeline {
             when {
                 anyOf {
                     branch 'master'
+                    branch 'scala-bump'
                 }
             }
             steps {
@@ -50,7 +51,10 @@ pipeline {
         }
         stage('Publish') {
             when {
-                branch 'master'
+                anyOf {
+                    branch 'master'
+                    branch 'scala-bump'
+                }
             }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
