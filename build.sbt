@@ -3,7 +3,7 @@ import sbtsonar.SonarPlugin.autoImport.sonarProperties
 
 ThisBuild / version := getVersion(1, 1)
 ThisBuild / scalacOptions ++= Seq("-feature")
-ThisBuild / scalaVersion := "2.12.13"
+ThisBuild / scalaVersion := "2.12.15"
 
 lazy val common = crossProject(JSPlatform, JVMPlatform)
   .in(file("."))
@@ -12,16 +12,15 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
           organization := "org.mule.common",
           name := "scala-common",
           libraryDependencies ++= Seq(
-              "org.scalactic" %%% "scalactic" % "3.0.1" % Test,
-              "org.scalatest" %%% "scalatest" % "3.0.0" % Test
+              "org.scalactic" %%% "scalactic" % "3.2.0" % Test,
+              "org.scalatest" %%% "scalatest" % "3.2.0" % Test
           ),
           credentials ++= Common.credentials()
       )
   )
-  .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % scalaJSVersion % "provided")
+  .jvmSettings(libraryDependencies += "org.scala-js" %% "scalajs-stubs" % "1.1.0" % "provided")
   .jsSettings(
-      scalaJSModuleKind := ModuleKind.CommonJSModule,
-      scalacOptions += "-P:scalajs:suppressExportDeprecations"
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
 
 lazy val commonJVM = common.jvm.in(file("./jvm"))

@@ -1,17 +1,18 @@
 package org.mulesoft.common.io
 
 import java.io.StringWriter
-
 import org.mulesoft.common.io.Output._
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{Assertion, FunSuite, Matchers}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.Assertion
 
 import scala.language.higherKinds
 
 /**
   * IO Tests
   */
-trait IoTest extends FunSuite with BaseIoTest {
+trait IoTest extends AnyFunSuite with BaseIoTest {
 
   test("read") {
     val dataDir = fs.syncFile(dirName)

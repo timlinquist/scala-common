@@ -58,7 +58,7 @@ object Output {
   implicit def stringBufferWriter[W <: LimitedStringBuffer]: Output[W] = StringBufferWriter.asInstanceOf[Output[W]]
 }
 
-@JSExportTopLevel("org.mulesoft.common.io.LimitedStringBuffer")
+@JSExportTopLevel("LimitedStringBuffer")
 case class LimitedStringBuffer(limit: Int) {
 
   private val buf: StringBuffer = new StringBuffer()
@@ -77,5 +77,5 @@ case class LimitedStringBuffer(limit: Int) {
 }
 
 @JSExportAll
-@JSExportTopLevel("org.mulesoft.common.io.LimitReachedException")
+@JSExportTopLevel("LimitReachedException")
 case class LimitReachedException() extends Exception()

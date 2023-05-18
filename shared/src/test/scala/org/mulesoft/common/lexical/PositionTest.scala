@@ -1,13 +1,14 @@
 package org.mulesoft.common.lexical
 
-import org.mulesoft.common.client.lexical.{Position, SourceLocation}
 import org.mulesoft.common.client.lexical.Position.ZERO
-import org.scalatest.{FunSuite, Matchers}
+import org.mulesoft.common.client.lexical.{Position, SourceLocation}
+import org.scalatest.funsuite.AnyFunSuite
+import org.scalatest.matchers.should.Matchers
 
 /**
  * Test Builders
  */
-trait PositionTest extends FunSuite with Matchers {
+trait PositionTest extends AnyFunSuite with Matchers {
 
   test("Position by Offset") {
     val a = Position(10)

@@ -1,6 +1,6 @@
 package org.mulesoft.common.io
 
-import org.scalatest.AsyncFunSuite
+import org.scalatest.funsuite.AsyncFunSuite
 
 import scala.concurrent.ExecutionContext
 
