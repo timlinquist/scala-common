@@ -1,10 +1,10 @@
 package org.mulesoft.common.core
 
 import org.mulesoft.common.functional.MonadInstances._
-import org.scalatest.AsyncFunSuite
-import org.scalatest.Matchers.convertToAnyShouldWrapper
+import org.scalatest.funsuite.AsyncFunSuite
+import org.scalatest.matchers.should.Matchers
 
-trait CachedFunctionTest extends AsyncFunSuite {
+trait CachedFunctionTest extends AsyncFunSuite with Matchers {
   test("Cache proxy with context") {
     val operation                                   = (f: Float) => Option(Math.nextUp(f))
     val proxy: CachedFunction[Float, Float, Option] = CachedFunction.fromMonadic(operation)

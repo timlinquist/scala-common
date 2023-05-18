@@ -12,8 +12,8 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
           organization := "org.mule.common",
           name := "scala-common",
           libraryDependencies ++= Seq(
-              "org.scalactic" %%% "scalactic" % "3.0.1" % Test,
-              "org.scalatest" %%% "scalatest" % "3.0.0" % Test
+              "org.scalactic" %%% "scalactic" % "3.2.13" % Test,
+              "org.scalatest" %%% "scalatest" % "3.2.13" % Test
           ),
           credentials ++= Common.credentials()
       )
