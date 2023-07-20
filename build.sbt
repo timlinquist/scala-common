@@ -22,6 +22,7 @@ lazy val common = crossProject(JSPlatform, JVMPlatform)
   .jsSettings(
     scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) }
   )
+  .settings(AutomaticModuleName.settings("org.mulesoft.common"))
 
 lazy val commonJVM = common.jvm.in(file("./jvm"))
 lazy val commonJS  = common.js.in(file("./js")).disablePlugins(SonarPlugin, ScoverageSbtPlugin)
