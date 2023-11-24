@@ -1,7 +1,8 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtsonar.SonarPlugin.autoImport.sonarProperties
 
-ThisBuild / version := getVersion(2, 0)
+//ThisBuild / version := getVersion(2, 0)
+ThisBuild / version := "2.1.0-JAVA21-INTERNAL"
 ThisBuild / scalacOptions ++= Seq("-feature")
 ThisBuild / scalaVersion := "2.12.18"
 
