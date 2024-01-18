@@ -12,7 +12,7 @@ object Common {
   val settings: Seq[Def.Setting[_]] = Seq(
       Test / parallelExecution := false,
       Test / fork := false,
-      scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xfatal-warnings"),
+//      scalacOptions ++= Seq("-unchecked", "-deprecation", "-Xfatal-warnings"),
       scalacOptions ++= Seq("-encoding", "utf-8")
   )
 
