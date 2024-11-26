@@ -29,7 +29,7 @@ pipeline {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
         BRANCH_NAME = "${env.BRANCH_NAME}"
         NPM_TOKEN = credentials('npm-mulesoft')
-        CURRENT_VERSION = sh(script:"cat dependencies.properties | grep \"version\" | cut -d '=' -f 2", returnStdout: true)
+        CURRENT_VERSION = sh(script: "cat dependencies.properties | grep \"version\" | cut -d '=' -f 2", returnStdout: true)
     }
     stages {
         stage('Test') {
@@ -57,7 +57,9 @@ pipeline {
         }
         stage('Publish') {
             when {
-                branch 'master'
+                anyOf {
+                    branch 'master'
+                }
             }
             steps {
                 wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
